@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Circle, Text, Group } from "react-konva";
-import { cellData } from "../../apis/canvasDataApi";
+import { CellData } from "../../apis/canvasDataApi";
 
 interface Props {
-  element: cellData;
+  element: CellData;
 }
 
 const CanvasElement: React.FC<Props> = ({ element }) => {
@@ -22,18 +22,16 @@ const CanvasElement: React.FC<Props> = ({ element }) => {
   return (
     <Group x={element.x} y={element.y}>
       <Text
-        align="center"
         text={element.data.name}
-        x={-3}
-        y={-(1.5 + lastCoordXNumber * 0.5)}
         visible={textVisible}
-        fontSize={1.5}
+        fontSize={12 / 40}
+        x={(1 + lastCoordXNumber) / 7}
         fontFamily="Roboto"
         fill={element.data.color}
       />
       <Circle
         fill={element.data.color}
-        radius={0.5 * lastCoordXNumber}
+        radius={lastCoordXNumber / 7}
         opacity={0.7}
         onMouseEnter={handleMouseEnter}
         onMouseOut={handleMouseOut}

@@ -15,9 +15,11 @@ interface Props {
 const PageSidebar: React.FC<Props> = ({ visible }) => {
   const dispatch = useDispatch();
   const painterData = useSelector((state: AppState) => state.painterData);
+
   const handleNameChange = (name: string): void => {
     dispatch(setPainterName(name));
   };
+
   const handleChangeComplete = (color: string): void => {
     dispatch(setCircleColor(color));
   };
