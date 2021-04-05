@@ -1,0 +1,2 @@
+export const SET_CIRCLE_COLOR = "SET_CIRCLE_COLOR";
+export const SET_PAINTER_NAME = "SET_PAINTER_NAME";

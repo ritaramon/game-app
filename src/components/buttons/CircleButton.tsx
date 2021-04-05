@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import PrimaryButton from "./PrimaryButton";
+import DefaultButton from "./DefaultButton";
 
-const CircleButton: React.FC = styled(PrimaryButton)`
+const CircleButton: React.FC<
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+> = styled(DefaultButton)`
   width: 48px;
-  height: 48px;
   border-radius: 50%;
 `;
 

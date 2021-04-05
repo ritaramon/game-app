@@ -1,17 +1,17 @@
 import axios from "axios";
 import { apiBaseUrl } from "../constants/apiConstans";
 
-export interface cellData {
+export type cellData = {
   x: number;
   y: number;
   data: cellDataDetails;
-}
+};
 
-interface cellDataDetails {
+type cellDataDetails = {
   name: string;
   color: string;
-  createdAt: string;
-}
+  createdAt?: string;
+};
 
 export const getData = async (
   path: string,

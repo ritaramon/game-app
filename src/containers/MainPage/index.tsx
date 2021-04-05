@@ -1,18 +1,24 @@
-import { getData, cellData } from "../../apis/Api";
+import { getData, cellData } from "../../apis/canvasDataApi";
 import React, { useEffect, useState } from "react";
 import { apiPaths } from "../../constants/apiConstans";
 import styled from "styled-components";
-import PageSidebar from "../../components/sidebars/PageSidebar";
+import PageSidebar from "./PageSidebar";
 import CircleButton from "../../components/buttons/CircleButton";
 import toggleIcon from "../../assets/icons/toggle-icon.png";
 import { Stage, Layer } from "react-konva";
-import CanvasElement from "../../components/CanvasElement";
+import CanvasElement from "../../components/others/CanvasElement";
 import Konva from "konva";
+import { AppState } from "../../state/reducers";
+import { useSelector } from "react-redux";
 
 interface StageData {
   stageScale: number;
   stageX: number;
   stageY: number;
+}
+
+interface ButtonProps {
+  right: boolean;
 }
 
 const MainPage: React.FC = () => {
@@ -22,21 +28,32 @@ const MainPage: React.FC = () => {
     stageX: 0,
     stageY: 0,
   });
+  const pickerColor = useSelector((state: AppState) => state.painterData.color);
+  const painterName = useSelector((state: AppState) => state.painterData.name);
+  const [sidebarVisible, setSidebarVisibility] = useState(true);
+
   useEffect(() => {
-    getData(apiPaths.getBoard, [0, 0, 200, 200]).then((response) => {
+    getData(apiPaths.getBoard, [0, 0, 100, 100]).then((response) => {
       setStageElements(response);
     });
   }, []);
-  const canvasStageRef: React.RefObject<Konva.Stage> = React.createRef();
-  // const canvasStageRef: React.RefObject<Konva.Stage> = React.createRef();
 
   const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    // e.target is a clicked Konva.Shape or current stage if you clicked on empty space
-    console.log("clicked on", e);
+    if (!painterName) return;
+    const coordinates = {
+      x: (e.evt.clientX - canvasStageData.stageX) / canvasStageData.stageScale,
+      y: (e.evt.clientY - canvasStageData.stageY) / canvasStageData.stageScale,
+      data: {
+        name: painterName,
+        color: pickerColor,
+      },
+    };
+    setStageElements([...stageElements, coordinates]);
   };
 
   const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
+    if (!painterName) return;
     const scaleBy = 1.1;
     const stage = e.target.getStage();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -52,7 +69,6 @@ const MainPage: React.FC = () => {
     };
 
     const newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
-
     setCanvasStageData({
       stageScale: newScale,
       stageX: -(mousePointTo.x - pointerPositionX / newScale) * newScale,
@@ -62,44 +78,40 @@ const MainPage: React.FC = () => {
 
   return (
     <>
-      <StageContainer>
-        <Stage
-          ref={canvasStageRef}
-          width={window.innerWidth}
-          height={window.innerHeight}
-          onWheel={handleWheel}
-          onClick={handleClick}
-          scaleX={canvasStageData.stageScale}
-          scaleY={canvasStageData.stageScale}
-          x={canvasStageData.stageX}
-          y={canvasStageData.stageY}
-        >
-          <Layer>
-            {stageElements.map((element, index) => {
-              return <CanvasElement key={index} element={element} />;
-            })}
-          </Layer>
-        </Stage>
-      </StageContainer>
-      <ButtonContainer>
-        <CircleButton>
+      <Stage
+        opacity={painterName ? 1 : 0.2}
+        onClick={handleClick}
+        listening={painterName ? true : false}
+        width={window.innerWidth}
+        height={window.innerHeight}
+        onWheel={handleWheel}
+        scaleX={canvasStageData.stageScale}
+        scaleY={canvasStageData.stageScale}
+        x={canvasStageData.stageX}
+        y={canvasStageData.stageY}
+      >
+        <Layer>
+          {stageElements.map((element, index) => {
+            return <CanvasElement key={index} element={element} />;
+          })}
+        </Layer>
+      </Stage>
+
+      <ButtonContainer right={sidebarVisible}>
+        <CircleButton onClick={() => setSidebarVisibility(!sidebarVisible)}>
           <img src={toggleIcon} alt="" />
         </CircleButton>
       </ButtonContainer>
-      <PageSidebar />
+      <PageSidebar visible={sidebarVisible} />
     </>
   );
 };
 
-const ButtonContainer = styled.div`
+const ButtonContainer = styled.div<ButtonProps>`
   position: absolute;
-  right: 214px;
+  right: ${(p) => (p.right ? "214" : "24")}px;
   top: 24px;
   z-index: 1;
-`;
-
-const StageContainer = styled.div`
-  background-color: #fff;
 `;
 
 export default MainPage;
