@@ -11,7 +11,13 @@ export type AppState = {
   painterData: PainterData;
 };
 
-const defaultPainterData: PainterData = { name: "", color: "#f44336" };
+const painterName = localStorage.getItem("painterName");
+const painterColor = localStorage.getItem("painterColor");
+
+const defaultPainterData: PainterData = {
+  name: painterName ?? "",
+  color: painterColor ?? "#f44336",
+};
 
 const painterData = (
   state = defaultPainterData,

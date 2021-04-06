@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import SectionWrapper from "../../components/wrappers/SectionWrapper";
 import { CirclePicker } from "react-color";
@@ -26,16 +26,6 @@ const PageSidebar: React.FC<Props> = ({ visible }) => {
     localStorage.setItem("painterColor", color);
   };
 
-  useEffect(() => {
-    const painterName = localStorage.getItem("painterName");
-    if (painterName) {
-      dispatch(setPainterName(painterName));
-    }
-    const painterColor = localStorage.getItem("painterColor");
-    if (painterColor) {
-      dispatch(setCircleColor(painterColor));
-    }
-  }, []);
   return (
     <Container visible={visible}>
       <SectionWrapper>
