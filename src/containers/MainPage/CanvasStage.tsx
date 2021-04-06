@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   getCanvasData,
   addElement,
@@ -27,7 +27,8 @@ const CanvasStage: React.FC = () => {
     stageX: 0,
     stageY: 0,
   });
-  const [boardVersion, setBoardVersion] = useState<number>(0);
+
+  const boardVersion = useMemo(() => ({ status: 0 }), []);
 
   useEffect(() => {
     trackBoardVersion();
@@ -37,8 +38,8 @@ const CanvasStage: React.FC = () => {
     setTimeout(() => {
       getBoardStatus().then((response) => {
         const newBoardVersion = response[0].update;
-        if (newBoardVersion > boardVersion) {
-          setBoardVersion(newBoardVersion);
+        if (newBoardVersion > boardVersion.status) {
+          boardVersion.status = newBoardVersion;
           getCanvasData([
             response[0].minX,
             response[0].minY,
