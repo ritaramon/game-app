@@ -9,7 +9,7 @@ import { combineReducers } from "redux";
 export type PainterData = {
   name: string;
   color: string;
-  radius: number;
+  radius: string;
 };
 
 export type AppState = {
@@ -22,7 +22,7 @@ const painterColor = localStorage.getItem("painterColor");
 const defaultPainterData: PainterData = {
   name: painterName ?? "",
   color: painterColor ?? "#f44336",
-  radius: 5,
+  radius: "5",
 };
 
 const painterData = (
@@ -35,8 +35,7 @@ const painterData = (
     case SET_PAINTER_NAME:
       return { ...state, name: action.value };
     case SET_CIRCLE_RADIUS:
-      return state;
-    // return { ...state, radius: action.value };
+      return { ...state, radius: action.value };
     default:
       return state;
   }
