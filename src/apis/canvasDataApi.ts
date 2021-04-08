@@ -4,11 +4,14 @@ import { apiBaseUrl, apiPaths } from "../constants/apiConstans";
 export type CellData = {
   x: number;
   y: number;
-  data: CellDataDetails;
+  data: CellDataRadiusDetails;
 };
 
-type CellDataDetails = {
-  name: string;
+type CellDataRadiusDetails = {
+  circle: {
+    name: string;
+    radius: number;
+  };
   color: string;
   createdAt?: string;
 };
@@ -34,7 +37,18 @@ export const getCanvasData = async (
   return (await request).data;
 };
 
-export const addElement = async (elementData: CellData): Promise<number> => {
+export const getBoardStatus = async (): Promise<BoardStatusData[]> => {
+  const apiPath = apiBaseUrl + apiPaths.getStatus;
+
+  const request = axios(apiPath, {
+    method: "GET",
+  });
+  return (await request).data;
+};
+
+export const addElementWithRadius = async (
+  elementData: CellData
+): Promise<number> => {
   const apiPath = apiBaseUrl + apiPaths.postBoard;
 
   const request = axios({
@@ -43,18 +57,12 @@ export const addElement = async (elementData: CellData): Promise<number> => {
     data: {
       x: elementData.x,
       y: elementData.y,
-      name: elementData.data.name,
+      name: {
+        name: elementData.data.circle.name,
+        radius: elementData.data.circle.radius,
+      },
       color: elementData.data.color,
     },
   });
   return (await request).status;
-};
-
-export const getBoardStatus = async (): Promise<BoardStatusData[]> => {
-  const apiPath = apiBaseUrl + apiPaths.getStatus;
-
-  const request = axios(apiPath, {
-    method: "GET",
-  });
-  return (await request).data;
 };

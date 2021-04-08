@@ -1,10 +1,15 @@
-import { SET_CIRCLE_COLOR, SET_PAINTER_NAME } from "./constants";
+import {
+  SET_CIRCLE_COLOR,
+  SET_PAINTER_NAME,
+  SET_CIRCLE_RADIUS,
+} from "./constants";
 import { PainterAction } from "./actions";
 import { combineReducers } from "redux";
 
 export type PainterData = {
   name: string;
   color: string;
+  radius: string;
 };
 
 export type AppState = {
@@ -17,6 +22,7 @@ const painterColor = localStorage.getItem("painterColor");
 const defaultPainterData: PainterData = {
   name: painterName ?? "",
   color: painterColor ?? "#f44336",
+  radius: "5",
 };
 
 const painterData = (
@@ -28,6 +34,8 @@ const painterData = (
       return { ...state, color: action.value };
     case SET_PAINTER_NAME:
       return { ...state, name: action.value };
+    case SET_CIRCLE_RADIUS:
+      return { ...state, radius: action.value };
     default:
       return state;
   }
