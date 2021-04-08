@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import {
   getCanvasData,
-  addElement,
+  addElementWithRadius,
   CellData,
   getBoardStatus,
 } from "../../apis/canvasDataApi";
@@ -20,6 +20,10 @@ type StageData = {
 const CanvasStage: React.FC = () => {
   const pickerColor = useSelector((state: AppState) => state.painterData.color);
   const painterName = useSelector((state: AppState) => state.painterData.name);
+  // const cirleRadius = useSelector(
+  //   (state: AppState) => state.painterData.radius
+  // );
+  // console.log(cirleRadius);
 
   const [stageElements, setStageElements] = useState<CellData[]>([]);
   const [canvasStageData, setCanvasStageData] = useState<StageData>({
@@ -57,17 +61,26 @@ const CanvasStage: React.FC = () => {
   const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
     e.evt.preventDefault();
     if (!painterName || e.evt.button !== 0) return;
+
+    const x =
+      (e.evt.clientX - canvasStageData.stageX) / canvasStageData.stageScale;
+
+    const y =
+      (e.evt.clientY - canvasStageData.stageY) / canvasStageData.stageScale;
+
+    const radius = parseInt(x.toString().charAt(x.toString().length - 1));
+    console.log(radius);
     const elementData = {
-      x: (e.evt.clientX - canvasStageData.stageX) / canvasStageData.stageScale,
-      y: (e.evt.clientY - canvasStageData.stageY) / canvasStageData.stageScale,
+      x: x,
+      y: y,
       data: {
-        name: painterName,
+        circle: { name: painterName, radius: radius },
         color: pickerColor,
       },
     };
     setStageElements([...stageElements, elementData]);
 
-    addElement(elementData).then((response) => {
+    addElementWithRadius(elementData).then((response) => {
       if (response === 200) {
         setStageElements([...stageElements, elementData]);
       }
