@@ -17,6 +17,11 @@ type StageData = {
   stageY: number;
 };
 
+type OriginalCoords = {
+  coordX: number;
+  coordY: number;
+};
+
 const CanvasStage: React.FC = () => {
   const pickerColor = useSelector((state: AppState) => state.painterData.color);
   const painterName = useSelector((state: AppState) => state.painterData.name);
@@ -26,6 +31,13 @@ const CanvasStage: React.FC = () => {
     stageScale: 10,
     stageX: 0,
     stageY: 0,
+  });
+  const [
+    originalStageCoords,
+    setOriginalStageCoords,
+  ] = useState<OriginalCoords>({
+    coordX: 0,
+    coordY: 0,
   });
 
   const boardVersion = useMemo(() => ({ status: 0 }), []);
@@ -40,6 +52,10 @@ const CanvasStage: React.FC = () => {
         const newBoardVersion = response[0].update;
         if (newBoardVersion > boardVersion.status) {
           boardVersion.status = newBoardVersion;
+          setOriginalStageCoords({
+            coordX: response[0].minX,
+            coordY: response[0].minY,
+          });
           getCanvasData([
             response[0].minX,
             response[0].minY,
@@ -66,8 +82,6 @@ const CanvasStage: React.FC = () => {
     const elementData = {
       x: x,
       y: y,
-      // name: painterName,
-      // color: pickerColor,
       data: {
         name: painterName,
         color: pickerColor,
@@ -110,6 +124,16 @@ const CanvasStage: React.FC = () => {
     });
   };
 
+  const handleDrag = (e: Konva.KonvaEventObject<DragEvent>) => {
+    e.evt.preventDefault();
+    console.log(e.currentTarget);
+    setCanvasStageData({
+      ...canvasStageData,
+      stageX: originalStageCoords.coordX + e.currentTarget.attrs.x,
+      stageY: originalStageCoords.coordY + e.currentTarget.attrs.y,
+    });
+  };
+
   Konva.dragButtons = [1];
 
   return (
@@ -117,6 +141,7 @@ const CanvasStage: React.FC = () => {
       draggable={painterName ? true : false}
       opacity={painterName ? 1 : 0.2}
       onClick={handleClick}
+      onDragEnd={handleDrag}
       listening={painterName ? true : false}
       width={window.innerWidth}
       height={window.innerHeight}
@@ -129,7 +154,6 @@ const CanvasStage: React.FC = () => {
       <Layer>
         {stageElements.map((element) => {
           const id = element._id ?? "" + element.x + element.y;
-
           return <CanvasElement key={id} element={element} />;
         })}
       </Layer>
