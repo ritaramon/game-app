@@ -7,7 +7,7 @@ interface Props {
 }
 
 const CanvasElement: React.FC<Props> = ({ element }) => {
-  const [textVisible, setTextVisibility] = useState<boolean>(false);
+  const [textVisible, setTextVisibility] = useState(false);
 
   const handleMouseEnter = (): void => {
     setTextVisibility(true);
@@ -15,10 +15,6 @@ const CanvasElement: React.FC<Props> = ({ element }) => {
   const handleMouseOut = (): void => {
     setTextVisibility(false);
   };
-  //used for creation of different size circles
-  // const lastCoordXNumber: number = parseInt(
-  //   element.x.toString().charAt(element.x.toString().length - 1)
-  // );
 
   return (
     <Group x={element.x} y={element.y}>
