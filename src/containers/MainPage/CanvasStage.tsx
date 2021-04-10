@@ -20,14 +20,10 @@ type StageData = {
 const CanvasStage: React.FC = () => {
   const pickerColor = useSelector((state: AppState) => state.painterData.color);
   const painterName = useSelector((state: AppState) => state.painterData.name);
-  // const cirleRadius = useSelector(
-  //   (state: AppState) => state.painterData.radius
-  // );
-  // console.log(cirleRadius);
 
   const [stageElements, setStageElements] = useState<CellData[]>([]);
   const [canvasStageData, setCanvasStageData] = useState<StageData>({
-    stageScale: 50,
+    stageScale: 10,
     stageX: 0,
     stageY: 0,
   });
@@ -47,8 +43,8 @@ const CanvasStage: React.FC = () => {
           getCanvasData([
             response[0].minX,
             response[0].minY,
-            parseFloat(response[0].maxX),
-            parseFloat(response[0].maxY),
+            response[0].maxX,
+            response[0].maxY,
           ]).then((response) => {
             setStageElements(response);
           });
@@ -61,26 +57,28 @@ const CanvasStage: React.FC = () => {
   const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
     e.evt.preventDefault();
     if (!painterName || e.evt.button !== 0) return;
-
     const x =
       (e.evt.clientX - canvasStageData.stageX) / canvasStageData.stageScale;
 
     const y =
       (e.evt.clientY - canvasStageData.stageY) / canvasStageData.stageScale;
-
     const radius = parseInt(x.toString().charAt(x.toString().length - 1));
-    console.log(radius);
     const elementData = {
       x: x,
       y: y,
+      // name: painterName,
+      // color: pickerColor,
       data: {
-        circle: { name: painterName, radius: radius },
+        name: painterName,
         color: pickerColor,
+        data: {
+          radius: radius,
+        },
       },
     };
     setStageElements([...stageElements, elementData]);
 
-    addElementWithRadius(elementData).then((response) => {
+    addElementWithRadius(elementData).then((response: number) => {
       if (response === 200) {
         setStageElements([...stageElements, elementData]);
       }
@@ -129,8 +127,10 @@ const CanvasStage: React.FC = () => {
       y={canvasStageData.stageY}
     >
       <Layer>
-        {stageElements.map((element, index) => {
-          return <CanvasElement key={index} element={element} />;
+        {stageElements.map((element) => {
+          const id = element._id ?? "" + element.x + element.y;
+
+          return <CanvasElement key={id} element={element} />;
         })}
       </Layer>
     </Stage>

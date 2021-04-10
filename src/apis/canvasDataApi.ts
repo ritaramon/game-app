@@ -2,26 +2,28 @@ import axios from "axios";
 import { apiBaseUrl, apiPaths } from "../constants/apiConstans";
 
 export type CellData = {
+  _id?: string;
   x: number;
   y: number;
   data: CellDataRadiusDetails;
 };
 
 type CellDataRadiusDetails = {
-  circle: {
-    name: string;
+  name: string;
+  color: string;
+  data: {
     radius: number;
   };
-  color: string;
+
   createdAt?: string;
 };
 
 type BoardStatusData = {
   update: number;
   minX: number;
-  maxX: string;
+  maxX: number;
   minY: number;
-  maxY: string;
+  maxY: number;
 };
 
 export const getCanvasData = async (
@@ -57,11 +59,11 @@ export const addElementWithRadius = async (
     data: {
       x: elementData.x,
       y: elementData.y,
-      name: {
-        name: elementData.data.circle.name,
-        radius: elementData.data.circle.radius,
-      },
+      name: elementData.data.name,
       color: elementData.data.color,
+      data: {
+        radius: elementData.data.data.radius,
+      },
     },
   });
   return (await request).status;

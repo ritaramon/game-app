@@ -23,16 +23,16 @@ const CanvasElement: React.FC<Props> = ({ element }) => {
   return (
     <Group x={element.x} y={element.y}>
       <Text
-        text={element.data.circle.name}
+        text={element.data.name}
         visible={textVisible}
-        fontSize={12 / 40}
-        x={(1 + element.data.circle.radius) / 7}
+        fontSize={12 / 10}
+        x={1 + (element.data.data?.radius ?? 0)}
         fontFamily="Roboto"
         fill={element.data.color}
       />
       <Circle
         fill={element.data.color}
-        radius={element.data.circle.radius / 7}
+        radius={element.data.data?.radius ?? 1}
         opacity={0.7}
         onMouseEnter={handleMouseEnter}
         onMouseOut={handleMouseOut}
